@@ -262,7 +262,7 @@ int main() {
     calcular_metricas_netflix(&max_v, &min_v, &prom_v);
     int netflix_moda = calcular_moda_netflix();
 
-    // 1. Ejecutar y capturar la métrica base secuencial real en la RAM
+    // Ejecutar y capturar la métrica base secuencial real en la RAM
     printf("[SISTEMA] Evaluando rendimiento base secuencial en RAM...\n");
     double tiempo_secuencial_real = ejecutar_procesamiento_secuencial(netflix_moda, min_v, max_v, prom_v);
     printf("[SISTEMA] Prueba secuencial terminada.\n\n");
@@ -312,7 +312,7 @@ int main() {
     sem_destroy(&elementos_cola);
     sem_destroy(&espacios_cola);
 
-    // Cálculo del Factor de Aceleración Secuencial RAM vs Hilos Totales
+    // Calculo del factor de Aceleración Secuencial RAM vs Hilos Totales
     double tiempo_secuencial_acumulado = 0.0;
     for(int i=0; i<NUM_HILOS; i++) {
         tiempo_secuencial_acumulado += configuracion_hilos[i].tiempo_ejecucion;
