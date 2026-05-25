@@ -71,7 +71,7 @@ pthread_mutex_t cerrojo_cola;
 sem_t elementos_cola;  
 sem_t espacios_cola;   
 
-// Generacion aleatoria de los datos de reproduccion en la memoria RAM
+// Generacion aleatoria de los datos de reproduccion 
 void generar_datos_netflix() {
     srand(time(NULL));
     for (int i = 0; i < N; i++) {
@@ -114,7 +114,7 @@ int calcular_moda_netflix() {
 void calcular_metricas_netflix(float *max, float *min, float *promedio) {
     float suma = 0;
     int cont_validos = 0;
-    *max = -1e9; *min = 1e9;
+    *max = -1; *min = 101;
     for (int i = 0; i < N; i++) {
         if (dataset[i].porcentaje_visto >= 0) {
             suma += dataset[i].porcentaje_visto;
@@ -180,7 +180,7 @@ void* procesar_bloque_netflix(void* arg) {
         dataset[i].porcentaje_visto = (dataset[i].porcentaje_visto - datos->min_visto) / 
                                       (datos->max_visto - datos->min_visto);
 
-        // Entrada segura a la cola circular intermedio RAM
+        // Entrada segura a la cola circular intermedia
         sem_wait(&espacios_cola);          
         pthread_mutex_lock(&cerrojo_cola); 
 
@@ -210,7 +210,8 @@ void* procesar_bloque_netflix(void* arg) {
     pthread_exit(NULL);
 }
 
-// Extraccion de reportes desde la cola para mostrar registros normales en la consola principal y alertas de error en la terminal secundaria
+// Extraccion de reportes desde la cola para mostrar registros normales en la consola principal 
+//y alertas de error en la terminal secundaria
 void* hilo_monitoreo_completo(void* arg) {
     (void)arg;
     int items_procesados = 0;
@@ -253,7 +254,8 @@ void* hilo_monitoreo_completo(void* arg) {
     pthread_exit(NULL);
 }
 
-// Hilo principal encargado de inicializar herramientas POSIX coordinar el despliegue del pipeline y presentar el reporte final de rendimiento
+// Hilo principal encargado de inicializar herramientas POSIX, 
+//coordinar el despliegue y presentar el reporte final de rendimiento
 int main() {
     struct timespec start, end;
     generar_datos_netflix();
@@ -327,13 +329,13 @@ int main() {
     printf("=============================================================\n");
     printf("  Tiempos de ejecución por Hilo Trabajador:\n");
     for (int i = 0; i < NUM_HILOS; i++) {
-        printf("   [➔] Hilo %d: %.5f segundos (Procesó %d datos)\n", 
+        printf(" Hilo %d: %.5f segundos (Procesó %d datos)\n", 
                configuracion_hilos[i].id_hilo, 
                configuracion_hilos[i].tiempo_ejecucion,
                (configuracion_hilos[i].fin - configuracion_hilos[i].inicio));
     }
     printf("-------------------------------------------------------------\n");
-    printf(" Tiempo Secuencial Puro (Cómputo Neto en RAM): %.5f segs\n", tiempo_secuencial_real);
+    printf(" Tiempo Secuencial Puro (Computo Neto en RAM): %.5f segs\n", tiempo_secuencial_real);
     printf(" Tiempo Secuencial Acumulado (Con Overhead):  %.5f segs\n", tiempo_secuencial_acumulado);
     printf(" Tiempo Concurrente Real (Impresión + Pipeline): %.5f segs\n", tiempo_total_concurrente);
     printf(" Eficiencia del Pipeline de Despliegue:          %.2fx\n", speedup_teorico);
