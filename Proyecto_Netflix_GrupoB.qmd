@@ -201,16 +201,16 @@ _Figura 19:  Comparativa de la carga de trabajo según el hilo_
 ## Conclusiones del proyecto 
 1. Al realizar el programa el procesar, cada hilo individualmente, genera desgaste de memoria y de recursos, por esa razón se aplica el uso de multihilos, para que el programa sea escalable, flexible y optimice los recursos que ocupa del procesador, separándose en 100 partes semejantes, los hilos que trabajan en procesamiento, limpieza y normalización son 3 hilos que trabajan al mismo tiempo , para que el Sistema Operativo en este caso Linux regule las tareas y las reparta de manera eficiente entre los núcleos del CPU. 
 
-2. Las funciones de entrada y salida, son manejadas por medio del hilo de monitoreo, que sus cambios afectan al Kernel gracias al direccionamiento a una segunda terminal, porque el tamaño de la cola es limitado, (10000),  aplicando de manera necesaria el uso de mutex y de semáforos, ya que el hilo monitor asigna un tiempo aproximado de 10 milisegundos a cada sección de registros, llenando la cola con 10 ciclos que solo al terminar todo puede avanzar con los siguientes procesos. 
-3. La implementación de semáforos sirve para proteger la región critica que tenemos en la cola circular, procurando que los hilos no se ejecuten de manera asincrónica, al memento de verificar el tiempo en que los hilos se demoran en ejecutarse, el hilo 1 es el que se demora menos que el hilo 2 y 3, porque el planificador de Linux y la administración de la cola que comparten entre hilos, implementas su comportamiento dinámico característico,  dando al hilo 1 el menor grado de contención al inicial el proceso de los datos del registro de películas en Netflix.
+2. Las funciones de entrada y salida, son manejadas por medio del hilo de monitoreo, que sus cambios afectan al Kernel gracias al direccionamiento a una segunda terminal, porque el tamaño de la cola es limitado, (100000),  aplicando de manera necesaria el uso de mutex y de semáforos, ya que el hilo monitor asigna un tiempo aproximado de 10 milisegundos a cada sección de registros, llenando la cola con 10 ciclos que solo al terminar todo puede avanzar con los siguientes procesos. 
+3. La implementación de semáforos sirve para proteger la región critica que tenemos en la cola circular, procurando que los hilos no se ejecuten de manera asincrónica, al memento de verificar el tiempo en que los hilos se demoran en ejecutarse, el hilo 1 es el que se demora menos que el hilo 2 y 3, porque el planificador de Linux y la administración de la cola que comparten entre hilos, implementan su comportamiento dinámico característico,  dando al hilo 1 el menor grado de contención al inicial el proceso de los datos del registro de películas en Netflix.
 
 ## Referecias Bibliográficas
 ### Bibliografía
 Bansal, S. (2021). Netflix Movies and TV Shows. Kaggle.com. https://www.kaggle.com/datasets/shivamb/netflix-showsMartinez, S. (2026a). 
 
-Clase2 -Capítulo 2: Gestión de Procesos. Epn.edu.ec. https://aulasvirtuales.epn.edu.ec/pluginfile.php/16645956/mod_resource/content/1/Clase%205.pdfMartinez, S. (2026b). 
+Clase4 -Capítulo 2: Gestión de Procesos. Epn.edu.ec. https://aulasvirtuales.epn.edu.ec/pluginfile.php/16626266/mod_resource/content/1/Clase%204.pdf, S. (2026b). 
 
-Clase3 -Capítulo 2: Gestión de Procesos. Epn.edu.ec. https://aulasvirtuales.epn.edu.ec/pluginfile.php/16626266/mod_resource/content/1/Clase%204.pdf
+Clase5 -Capítulo 2: Gestión de Procesos. Epn.edu.ec. https://aulasvirtuales.epn.edu.ec/pluginfile.php/16645956/mod_resource/content/1/Clase%205.pdf
 
 pthreads(7) - Linux manual page. (2026). Man7.org. https://man7.org/linux/man-pages/man7/pthreads.7.html
 
