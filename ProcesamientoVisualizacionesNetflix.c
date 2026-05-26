@@ -54,6 +54,7 @@ typedef struct {
     double tiempo_ejecucion;
 } DatosHilo;
 
+
 // VARIABLES GLOBALES
 RegistroNetflix dataset[N];
 ReporteTransmision cola_pantalla[MAX_COLA];
@@ -73,7 +74,7 @@ sem_t espacios_cola;
 
 // Generacion aleatoria de los datos de reproduccion 
 void generar_datos_netflix() {
-    srand(time(NULL));
+    srand(time(NULL)); //toma un numero cualqueira del tiempo de la compu
     for (int i = 0; i < N; i++) {
         dataset[i].id_reproduccion = i + 1;
 
@@ -114,13 +115,15 @@ int calcular_moda_netflix() {
 void calcular_metricas_netflix(float *max, float *min, float *promedio) {
     float suma = 0;
     int cont_validos = 0;
-    *max = -1; *min = 101;
+    *max = -1; *min = 101; 
     for (int i = 0; i < N; i++) {
         if (dataset[i].porcentaje_visto >= 0) {
             suma += dataset[i].porcentaje_visto;
             cont_validos++;
-            if (dataset[i].porcentaje_visto > *max) *max = dataset[i].porcentaje_visto;
-            if (dataset[i].porcentaje_visto < *min) *min = dataset[i].porcentaje_visto;
+            if (dataset[i].porcentaje_visto > *max) 
+            *max = dataset[i].porcentaje_visto;
+            if (dataset[i].porcentaje_visto < *min) 
+            *min = dataset[i].porcentaje_visto;
         }
     }
     *promedio = (cont_validos > 0) ? (suma / cont_validos) : 50.0;
@@ -130,7 +133,7 @@ void calcular_metricas_netflix(float *max, float *min, float *promedio) {
 // Procesamiento secuencial en un unico hilo 
 double ejecutar_procesamiento_secuencial(int moda, float min, float max, float prom) {
     struct timespec start, end;
-    clock_gettime(CLOCK_MONOTONIC, &start);
+    clock_gettime(CLOCK_MONOTONIC, &start); 
 
 
     RegistroNetflix* copia_temporal = malloc(N * sizeof(RegistroNetflix));
@@ -150,21 +153,21 @@ double ejecutar_procesamiento_secuencial(int moda, float min, float max, float p
     }
 
     free(copia_temporal);
-    clock_gettime(CLOCK_MONOTONIC, &end);
+    clock_gettime(CLOCK_MONOTONIC, &end); 
     return (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
 }
 
 // Limpieza, imputacion y normalizacion concurrente de un bloque especifico de datos por parte de un hilo
 void* procesar_bloque_netflix(void* arg) {
     DatosHilo* datos = (DatosHilo*)arg;
-    int limpiados_local = 0;
-    int imputados_local = 0;
+    int limpiados_local = 0; // porcentaje limpiado porcentaje = -15 
+    int imputados_local = 0; // genero erroneo = 0 , Ciencia ficcion. 
 
     struct timespec hilo_start, hilo_end;
     clock_gettime(CLOCK_MONOTONIC, &hilo_start);
 
     for (int i = datos->inicio; i < datos->fin; i++) {
-        char tag_estado[30] = "DATO SANO [OK]";
+        char tag_estado[30] = "DATO VERIFICADO (OK)";
 
         if (dataset[i].porcentaje_visto < 0) {
             dataset[i].porcentaje_visto = datos->promedio_visto;
@@ -174,10 +177,10 @@ void* procesar_bloque_netflix(void* arg) {
         else if (dataset[i].genero_pelicula == GENERO_DESCONOCIDO) {
             dataset[i].genero_pelicula = datos->moda_global;
             imputados_local++;
-            strcpy(tag_estado, "ERR: Gen Huerfano");
+            strcpy(tag_estado, "ERR: Sin Genero");
         }
 
-        dataset[i].porcentaje_visto = (dataset[i].porcentaje_visto - datos->min_visto) / 
+        dataset[i].porcentaje_visto = (dataset[i].porcentaje_visto - datos->min_visto) /   
                                       (datos->max_visto - datos->min_visto);
 
         // Entrada segura a la cola circular intermedia
@@ -197,7 +200,7 @@ void* procesar_bloque_netflix(void* arg) {
     }
 
     // Cronometrar salida del hilo trabajador
-    clock_gettime(CLOCK_MONOTONIC, &hilo_end);
+    clock_gettime(CLOCK_MONOTONIC, &hilo_end); //
     datos->tiempo_ejecucion = (hilo_end.tv_sec - hilo_start.tv_sec) + 
                               (hilo_end.tv_nsec - hilo_start.tv_nsec) / 1e9;
 
@@ -217,7 +220,7 @@ void* hilo_monitoreo_completo(void* arg) {
     int items_procesados = 0;
 
     // Conexión dinámica a la Terminal 2
-    FILE* terminal_errores = fopen("/dev/tty2", "w"); 
+    FILE* terminal_errores = fopen("/dev/tty2", "w"); // 
     if (terminal_errores == NULL) {
         terminal_errores = stdout; 
     } else {
@@ -225,7 +228,7 @@ void* hilo_monitoreo_completo(void* arg) {
     }
 
     while (items_procesados < N) {
-        sem_wait(&elementos_cola);          
+        sem_wait(&elementos_cola);           
         pthread_mutex_lock(&cerrojo_cola);   
 
         ReporteTransmision item = cola_pantalla[frente_cola];
@@ -239,7 +242,7 @@ void* hilo_monitoreo_completo(void* arg) {
                     item.id_registro, item.id_hilo, item.estado);
             fflush(terminal_errores); 
         } else {
-            printf("[SANO] Registro %d/100000 | Hilo %d | Pct Normalizado: %.4f | Género: %d\n",
+            printf("[VERIFICADO] Registro %d/100000 | Hilo %d | Pct Normalizado: %.4f | Género: %d\n",
                    item.id_registro, item.id_hilo, item.valor_porcentaje, item.genero_final);
             fflush(stdout); 
         }
@@ -280,7 +283,7 @@ int main() {
     pthread_t hilos_trabajadores[NUM_HILOS];
     pthread_t hilo_monitor;
     DatosHilo configuracion_hilos[NUM_HILOS];
-    int tam_bloque = N / NUM_HILOS;
+    int tam_bloque = N / NUM_HILOS; // 33 333
 
     printf("[SISTEMA OPERATIVO] Desplegando Pipeline Mixto Concurrente...\n");
     clock_gettime(CLOCK_MONOTONIC, &start);
@@ -290,7 +293,7 @@ int main() {
     for (int i = 0; i < NUM_HILOS; i++) {
         configuracion_hilos[i].id_hilo = i + 1;
         configuracion_hilos[i].inicio = i * tam_bloque;
-        configuracion_hilos[i].fin = (i == NUM_HILOS - 1) ? N : (i + 1) * tam_bloque;
+        configuracion_hilos[i].fin = (i == NUM_HILOS - 1) ? N : (i + 1) * tam_bloque; // 33 333 , 66 666, 100 000
         configuracion_hilos[i].moda_global = netflix_moda;
         configuracion_hilos[i].min_visto = min_v;
         configuracion_hilos[i].max_visto = max_v;
